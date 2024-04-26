@@ -20,54 +20,59 @@
 //! ```
 
 #![warn(missing_docs)]
+#![no_std]
 
 /// The implication macro.
-/// See the crate-level documentation for examples.
+/// See the [crate-level documentation][crate] for examples.
 #[macro_export]
 macro_rules! implies {
-    (let $p:pat = $scrutinee:expr => $consequent:expr) => {
-        match $scrutinee {
-            $p => $consequent,
-            _ => true,
-        }
-    };
-    (let $p:pat = $scrutinee:expr => $($tail:tt)*) => {
-        $crate::implies!(let $p = $scrutinee => $crate::implies!($($tail)*))
-    };
-    ($antecedent:expr => $consequent:expr) => {
-        !$antecedent || $consequent
-    };
-    ($antecedent:expr => $($tail:tt)*) => {
-        $crate::implies!($antecedent => $crate::implies!($($tail)*))
+    ($($tt:tt)*) => {
+        $crate::implies_tt!(() $($tt)*)
     };
 }
 
-#[cfg(test)]
-mod tests {
-    use super::implies as i;
+#[doc(hidden)]
+pub use core::compile_error;
 
-    #[test]
-    #[allow(clippy::assertions_on_constants)]
-    fn test() {
-        assert!(i!(false => true));
-        assert!(i!(false => false));
-        assert!(i!(true => true));
-        assert!(!i!(true => false));
-
-        assert!(i!(true => false => true => false));
-        assert!(i!(false => false => false));
-        assert!(!i!(i!(false => false) => false));
-
-        for a in [false, true] {
-            for b in [false, true] {
-                for c in [false, true] {
-                    assert_eq!(i!(a => b => c), i!((a && b) => c));
-                    assert_eq!(i!(a => b => c), i!(a => i!(b => c)));
-                }
-            }
+#[doc(hidden)]
+#[macro_export]
+macro_rules! implies_tt {
+    (($($front:tt)*) => $($tail:tt)*) => {
+        if $($front)* {
+            $crate::implies_tt_tail!(() $($tail)*)
+        } else {
+            true
         }
+    };
 
-        assert!(i!(let Some(foo) = Some(0) => foo < 3));
-        assert!(!i!(let Some(foo) = Some(0) => foo > 3));
-    }
+    (($($front:tt)*) $next:tt $($tail:tt)*) => {
+        $crate::implies_tt!(($($front)* $next) $($tail)*)
+    };
+
+    (($($front:tt)*)) => {
+        {
+            $crate::compile_error!("`implies` macro invocation must contain at least one implication (`=>`)");
+            $($front)*
+        }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! implies_tt_tail {
+    (($($front:tt)*) => $($tail:tt)*) => {
+        if $($front)* {
+            $crate::implies_tt_tail!(() $($tail)*)
+        } else {
+            true
+        }
+    };
+
+    (($($front:tt)*) $next:tt $($tail:tt)*) => {
+        $crate::implies_tt_tail!(($($front)* $next) $($tail)*)
+    };
+
+    (($($front:tt)*)) => {
+        $($front)*
+    };
 }

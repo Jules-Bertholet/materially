@@ -1,12 +1,17 @@
 [package]
 name = "materially"
 version = "0.1.1"
-edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "A macro for material implication"
 homepage = "https://github.com/Jules-Bertholet/materially"
 repository = "https://github.com/Jules-Bertholet/materially"
-keywords = ["implication", "implies", "macro"]
+categories = ["development-tools::testing", "mathematics", "no-std::no-alloc", "rust-patterns"]
+keywords = ["logic", "logical", "implication", "implies", "macro"]
+
+rust-version = "1.38"
+
+edition = "2018"
+exclude = ["/.github/", ".gitignore"]
 
 [lints.rust]
 "unsafe_code" = "forbid"

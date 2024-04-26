@@ -31,3 +31,12 @@ jobs:
         run: cargo fmt --check --verbose
       - name: Check clippy
         run: cargo clippy --all-targets --verbose
+
+  msrv:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.38
+      - name: Build
+        run: cargo build --verbose
