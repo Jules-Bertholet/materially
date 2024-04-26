@@ -13,7 +13,7 @@
 //! assert!(!i!(true => false));
 //!
 //! // Implication is right-associative
-//! assert!(i!(true => false => true => false));
+//! assert!(i!(false => false => false));
 //!
 //! // let-chains style syntax is also supported
 //! assert!(i!(let Some(a) = Some(17) => a > 3 => let None = Some(17) => false));
@@ -53,19 +53,21 @@ mod tests {
         assert!(i!(false => false));
         assert!(i!(true => true));
         assert!(!i!(true => false));
+
         assert!(i!(true => false => true => false));
+        assert!(i!(false => false => false));
+        assert!(!i!(i!(false => false) => false));
 
         for a in [false, true] {
             for b in [false, true] {
                 for c in [false, true] {
                     assert_eq!(i!(a => b => c), i!((a && b) => c));
+                    assert_eq!(i!(a => b => c), i!(a => i!(b => c)));
                 }
             }
         }
 
         assert!(i!(let Some(foo) = Some(0) => foo < 3));
         assert!(!i!(let Some(foo) = Some(0) => foo > 3));
-
-        //assert!(i!(let Some(foo) = Some(0) => let _ = true));
     }
 }

@@ -20,7 +20,7 @@ assert!(i!(true => true));
 assert!(!i!(true => false));
 
 // Implication is right-associative
-assert!(i!(true => false => true => false));
+assert!(i!(false => false => false));
 
 // let-chains style syntax is also supported
 assert!(i!(let Some(a) = Some(17) => a > 3 => let None = Some(17) => false));
