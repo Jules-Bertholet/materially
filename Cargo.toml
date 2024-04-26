@@ -1,0 +1,12 @@
+[package]
+name = "materially"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "A macro for material implication"
+homepage = "https://github.com/Jules-Bertholet/materially"
+repository = "https://github.com/Jules-Bertholet/materially"
+keywords = ["implication", "implies", "macro"]
+
+[lints.rust]
+"unsafe_code" = "forbid"
